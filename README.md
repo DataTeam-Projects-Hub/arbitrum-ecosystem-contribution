@@ -1,4 +1,4 @@
-# 🔷 Arbitrum Ecosystem Contribution Repository
+# Arbitrum Ecosystem Contribution Repository
 
 Welcome to the `arbitrum-ecosystem-contribution` repository!  
 This repo is designed for **short-term** tasks and insights related to the Arbitrum blockchain ecosystem.

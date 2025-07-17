@@ -14,7 +14,7 @@ WITH transactions AS (
     arbitrum.blocks blk
     ON txs.block_number = blk.number
   WHERE
-     txs.block_time >= TIMESTAMP '2025-04-16'
+     txs.block_time >= TIMESTAMP '2025-05-01'
 ),
 
 transactions_fees AS (

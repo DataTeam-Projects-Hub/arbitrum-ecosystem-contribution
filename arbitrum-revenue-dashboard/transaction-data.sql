@@ -4,6 +4,7 @@ WITH transactions AS (
     DATE(txs.block_time) AS block_date,  -- Extract date for grouping
     txs.gas_used,
     txs.gas_used_for_l1,
+    txs.priority_fee_per_gas as priority_fee_per_gas,
     txs.gas_price AS gas_price,
     blk.base_fee_per_gas AS base_fee_per_gas,
     txs.effective_gas_price AS effective_gas_price
@@ -25,17 +26,10 @@ transactions_fees AS (
 
     -- L2 Surplus Fee in ETH
     CASE 
-      WHEN gas_price > effective_gas_price  
-      THEN ((gas_used - gas_used_for_l1) * (gas_price - effective_gas_price)) / 1e18 
+      WHEN priority_fee_per_gas > effective_gas_price  
+      THEN ((gas_used - gas_used_for_l1) * priority_fee_per_gas) / 1e18 
       ELSE 0
       END AS l2_surplus_fee_eth,
-
-    -- L1 Surplus Fee in ETH
-    CASE
-      WHEN gas_price > effective_gas_price
-      THEN (gas_used_for_l1 * (gas_price - effective_gas_price)) / 1e18 
-      ELSE 0
-      END AS l1_surplus_fee_eth
 
   FROM transactions
 ),

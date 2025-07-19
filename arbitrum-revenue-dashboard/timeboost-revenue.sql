@@ -9,10 +9,10 @@ timeboost_txs AS (
     arbitrum.logs
   WHERE
     block_time >= TIMESTAMP '2025-05-01'
-    AND topic0 = 0x7f5bdabbd27a8fc572781b177055488d7c6729a2bade4f57da9d200f31c15d47 -- AuctionResolved Event 
+    AND topic0 = 0x7f5bdabbd27a8fc572781b177055488d7c6729a2bade4f57da9d200f31c15d47 -- AuctionResolved
     AND contract_address IN (
-        0x5fcb496a31b7ae91e7c9078ec662bd7a55cd3079, -- Arbitrum One
-        0xa5aBADAF73DFcf5261C7f55420418736707Dc0db  -- Arbitrum Nova
+        0x5fcb496a31b7ae91e7c9078ec662bd7a55cd3079, -- TimeBoost auction contracts
+        0xa5aBADAF73DFcf5261C7f55420418736707Dc0db
     )
 ),
 
@@ -40,7 +40,7 @@ revenue_with_prices AS (
   LEFT JOIN
     eth_prices p ON d.day = p.day
   GROUP BY
-        d.day
+    d.day
 ),
 
 tx_counts AS (
@@ -64,13 +64,13 @@ boosted_tx_counts AS (
   GROUP BY
     day
 ),
-
-boosted_tx_percentage AS (
+boost_usage AS (
   SELECT
     t.day,
     t.total_tx_count,
     COALESCE(b.boosted_tx_count, 0) AS boosted_tx_count,
     (CAST(COALESCE(b.boosted_tx_count, 0) AS DOUBLE) / NULLIF(t.total_tx_count, 0)) * 100 AS percent_boosted
+    -- (COALESCE(b.boosted_tx_count, 0)::FLOAT / NULLIF(t.total_tx_count, 0)) * 100 AS percent_boosted
   FROM
     tx_counts t
   LEFT JOIN
@@ -91,7 +91,7 @@ SELECT
 FROM
   revenue_with_prices r
 LEFT JOIN
-  boosted_tx_percentage u ON r.day = u.day
+  boost_usage u ON r.day = u.day
 LEFT JOIN
   boosted_tx_counts b ON r.day = b.day
 ORDER BY

@@ -1,10 +1,10 @@
-/* Daily Total Revenue from All Orbit Chains (ETH + USD) - Last 30 Days */
-WITH sequencer_chains AS (
+WITH 
+sequencer_chains AS (
   SELECT
     chain_name,
     sequencerInbox_address
   FROM query_5528848
-), 
+),
 
 filtered_tx AS (
   SELECT
@@ -16,6 +16,7 @@ filtered_tx AS (
     ON tx.to = TRY_CAST(sc.sequencerInbox_address AS VARBINARY)
   WHERE
     tx.block_time >= CURRENT_DATE - INTERVAL '30' DAY
+    AND ('{{chain_name}}' = '' OR sc.chain_name = '{{chain_name}}')
 ), 
 
 eth_revenue_per_day AS (
@@ -37,6 +38,7 @@ eth_price_per_day AS (
   GROUP BY
     1
 )
+
 SELECT
   r.day,
   r.total_revenue_eth,
